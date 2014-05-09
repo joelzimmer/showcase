@@ -16,7 +16,6 @@ var app = express();
 app.showcase = {};
 
 var views = __dirname + '/views';
-swig.init({ root: views, allowErrors: true });
 
 var externalMiddleware = [];
 
@@ -52,7 +51,7 @@ exports.initialize = function(config) {
 		var relativeBase = path.dirname(require.main.filename);
 		storagePath = path.join(relativeBase, config.files.storage_path);
 	} else {
-		storagePath = config.files.storage_path; 
+		storagePath = config.files.storage_path;
 	}
 
 	mkdirp.sync(config.files.storage_path + "/files");

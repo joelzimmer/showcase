@@ -19,11 +19,35 @@ exports.initialize = function(app) {
 		var collections = yield Collection.all({ workspace_handle: workspace_handle });
 		var collection_counts = yield Collection.itemCounts();
 
-		res.render("collections.html", { 
+		res.render("collections.html", {
 			collections: collections,
 			collection_counts: collection_counts
 		});
 	});
+
+  app.get("/workspaces/:workspace_handle/collections/export", workspaceLoader, workspaceAdmin, function*(req, res) {
+		var workspace = req.showcase.workspace;
+		var workspace_handle = req.params.workspace_handle;
+
+		var collections = yield Collection.all({ workspace_handle: workspace_handle });
+
+    var backupData = {};
+    collections.forEach(function (collection) {
+      if (!(workspace_handle in backupData)) {
+        backupData[workspace_handle] = {
+          name: collection.name,
+          description: collection.description,
+          title: collection.title
+        };
+      }
+
+      backupData[collection.name] = collection;
+    });
+
+		res.render("export.html", {
+      backupData: backupData
+		});
+  });
 
 	app.get("/workspaces/:workspace_handle/collections/new", workspaceLoader, workspaceAdmin, function(req, res) {
 
@@ -129,7 +153,7 @@ exports.initialize = function(app) {
 			controls: controls,
 			collection: collection,
 			fields: collection.fields,
-			subtitle: " › " + collection.title 
+			subtitle: " › " + collection.title
 		});
 	});
 

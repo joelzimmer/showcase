@@ -1,0 +1,7 @@
+{% extends 'layout.html' %}
+
+{% set title = 'Export Collection' %}
+
+{% block content %}
+<textarea>{{backupData|json(4)}}</textarea>
+{% endblock %}
