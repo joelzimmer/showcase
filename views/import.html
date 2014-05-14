@@ -1,0 +1,35 @@
+{% extends 'layout.html' %}
+
+{% set title = 'Import Workspace' %}
+
+{% block pagetitle %}
+	<div class="pagetitle">
+		<h1>Import Workspace</h1>
+		<div class="btn-group">
+			<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-gear"></i><span class="caret"></span></a>
+			<ul class="dropdown-menu">
+				<li><a class="permission-superuser" href="/workspaces/new">New Workspace</a></li>
+			</ul>
+		</div>
+		<hr>
+		<h3 class="muted">Workspaces are groups of collections, often one per web site</h3>
+	</div>
+{% endblock %}
+
+{% block content %}
+	<div class="content">
+		<form id="collection" method="post">
+			<table class="table" id="collection_form">
+				<tr>
+					<th>Collection JSON</th>
+					<td><textarea name="json"></textarea></td>
+				</tr>
+			</table>
+
+			<button class="btn btn-primary btn-large permission-administrator" id="save_collection">
+				<i class="icon-ok icon-white"></i>
+				Import
+			</button>
+		</form>
+	</div>
+{% endblock %}

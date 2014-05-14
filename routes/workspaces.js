@@ -19,6 +19,38 @@ exports.initialize = function(app) {
 		res.render("workspaces.html", { workspaces: workspaces });
 	});
 
+  app.get("/workspaces/import", requireSuperuser, function (req, res) {
+    res.render("import.html");
+  });
+
+  app.post("/workspaces/import", requireSuperuser, function*(req, res) {
+    var workspaces = JSON.parse(req.body.json);
+
+    // now that we've parsed the json, we have data to reconstruct our workspace.
+    var create = [];
+    var update = [];
+    // 1. see which workspace exists and schedule it for creation or update.
+    workspaces.keys(function*(handle) {
+      var collections = yield Collection.exportAll({ workspace_handle: handle });
+      if (collections.length === 0) {
+        create.push(handle);
+      } else {
+        update.push(handle);
+      }
+    });
+
+    create.forEach(function*(handle) {
+
+    });
+
+    update.forEach(function*(handle) {
+
+    });
+
+    res.redirect('/workspaces/');
+
+  });
+
 	app.get("/workspaces/new", requireSuperuser, function(req, res) {
 
 		var breadcrumbs = [ { text: 'New' } ];
