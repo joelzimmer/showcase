@@ -14,21 +14,6 @@ var Collection = require('../lib/collection.js');
 exports.setUp = suite.setUp;
 exports.tearDown = suite.tearDown;
 
-exports.exportAll = function(test) {
-  gx(function*() {
-		var collection = yield Collection.create({
-			title: 'Books',
-			description: 'Books for reading',
-			name: 'books',
-			workspace_handle: 'test',
-			fields: config.fixtures.book_fields,
-		});
-		var collections = yield Collection.exportAll({ workspace_handle: 'test' });
-		test.equal(typeof collections, 'object');
-    test.done()
-  });
-};
-
 exports.badWorkspace = function(test) {
   gx(function*() {
 		var collections = yield Collection.all({ workspace_handle: 'testfake' });

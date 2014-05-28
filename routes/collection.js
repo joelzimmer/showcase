@@ -77,14 +77,6 @@ exports.initialize = function(app) {
 		res.redirect('/workspaces/' + workspace.handle + '/collections');
 	});
 
-  app.get("/workspaces/:workspace_handle/export", workspaceLoader, workspaceAdmin, function*(req, res) {
-		var workspace = req.showcase.workspace;
-		var workspace_handle = req.params.workspace_handle;
-
-		var collections = yield Collection.exportAll({ workspace_handle: workspace_handle });
-		res.json(collections);
-  });
-
 	app.post("/workspaces/:workspace_handle/collections/:id/edit", workspaceLoader, workspaceAdmin, function*(req, res) {
 
 		var collection_id = req.params.id;

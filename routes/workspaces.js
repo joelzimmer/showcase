@@ -1,4 +1,6 @@
+var Collection = require('../lib/collection.js');
 var Deferrals = require('../lib/deferrals');
+var Workspace = require('../lib/workspace');
 var gx = require('gx');
 
 exports.initialize = function(app) {
@@ -12,9 +14,7 @@ exports.initialize = function(app) {
 
 	app.get("/workspaces", function*(req, res) {
 
-		var workspaces = yield models.workspaces
-			.findAll({})
-			.complete(gx.resume);
+		var workspaces = Workspace.all();
 
 		res.render("workspaces.html", { workspaces: workspaces });
 	});
@@ -24,32 +24,47 @@ exports.initialize = function(app) {
   });
 
   app.post("/workspaces/import", requireSuperuser, function*(req, res) {
-    var workspaces = JSON.parse(req.body.json);
-
+    var data = JSON.parse(req.body.json);
+    if (!Array.isArray(data)) {
+      data = [data];
+    }
     // now that we've parsed the json, we have data to reconstruct our workspace.
     var create = [];
     var update = [];
     // 1. see which workspace exists and schedule it for creation or update.
-    workspaces.keys(function*(handle) {
-      var collections = yield Collection.exportAll({ workspace_handle: handle });
-      if (collections.length === 0) {
-        create.push(handle);
-      } else {
-        update.push(handle);
-      }
+    data.forEach(function*(set) {
+      var workspace = set.workspace;
+      models.workspaces.find({ where: { handle: workspace.handle } })
+        .error(req.error)
+        .success(function(found) {
+
+          if (!found) {
+            create.push(set);
+          }
+      });
     });
 
     create.forEach(function*(handle) {
 
     });
 
-    update.forEach(function*(handle) {
-
-    });
-
     res.redirect('/workspaces/');
 
   });
+
+  app.get("/workspaces/:workspace_handle/export", workspaceLoader, workspaceAdmin, function*(req, res) {
+		var workspace = req.showcase.workspace;
+		var workspace_handle = req.params.workspace_handle;
+
+		var collections = yield Collection.all({ workspace_handle: workspace_handle });
+
+    var data = {
+      workspace: workspace,
+      collections: collections
+    };
+		res.json(data);
+  });
+
 
 	app.get("/workspaces/new", requireSuperuser, function(req, res) {
 
